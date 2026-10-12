@@ -1,10 +1,14 @@
+<p align="center">
+  <img src="assets/banner.svg" alt="prompt-rewriter: rough prompt in, clear prompt out. Nothing invented, nothing sent without your OK." width="100%">
+</p>
+
 # prompt-rewriter
 
 A Claude Code mod that turns a rough prompt into a clear one **before** you send it, and never sends anything without your OK.
 
-```
-/rewrite why does my azure devops pipeline skip the deploy stage, condition is succeeded()
-```
+<p align="center">
+  <img src="assets/demo-rewrite.svg" alt="Animated terminal: typing /rewrite with a messy Azure DevOps question. Status shows Classifying, then Rewriting, and a clear rewrite lands in the prompt box with the devops-cloud + debug personas." width="100%">
+</p>
 
 1. **Classify.** Haiku picks the role persona (from 23, such as DevOps/Cloud) and task persona (from 6, such as Debug) that fit the prompt.
 2. **Search, only when it matters.** If the prompt depends on recent information (new versions, migrations, deprecations, changed APIs), it runs one web search. For your own bugs and well-known techniques, it skips the search.
@@ -45,19 +49,19 @@ The rewrite is an editor, not a second agent. It is designed and [evaluated](eva
 
 ## Before and after
 
-```text
-You type:   add pagination to GET /orders, don't change the response shape, max page size 100
-Rewrite:    Add pagination to `GET /orders`. Do not change the response shape. The maximum page size is 100.
-Personas:   backend + feature · web search skipped
-```
+It clarifies your ask; it doesn't extend it. The first version of this mod added something you never asked for in a third of its rewrites:
 
-```text
-You type:   why is this query slow? SELECT * FROM Orders WHERE YEAR(CreatedAt) = 2025
-Rewrite:    Why is the query `SELECT * FROM Orders WHERE YEAR(CreatedAt) = 2025` slow?
-            (an early version added "…and suggest a faster way to write it", which you never asked for)
-```
+<p align="center">
+  <img src="assets/compare.svg" alt="You type: why is this query slow? SELECT * FROM Orders WHERE YEAR(CreatedAt) = 2025. The first version added 'Explain the cause and suggest a faster way to write it that can use an index on CreatedAt', an ask you never made. Now: Why is the query `SELECT * FROM Orders WHERE YEAR(CreatedAt) = 2025` slow?" width="100%">
+</p>
 
-More real samples, including web context and a planted prompt injection: **[docs/examples.md](docs/examples.md)**.
+When the prompt depends on recent information, it searches once and adds sourced **Recent context**:
+
+<p align="center">
+  <img src="assets/demo-web-context.svg" alt="Animated terminal: /rewrite upgrade the project from Next.js 14 to the latest version. Status shows Classifying, then Searching the web, then Rewriting. The rewrite lands with a Recent context section listing Next.js 15 breaking changes, each with its source URL." width="100%">
+</p>
+
+Every visual uses real outputs from the eval runs. More samples, including a planted prompt injection: **[docs/examples.md](docs/examples.md)**.
 
 ## Evaluated
 

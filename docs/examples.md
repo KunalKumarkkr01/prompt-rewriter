@@ -1,5 +1,9 @@
 # Before and after
 
+<p align="center">
+  <img src="../assets/compare.svg" alt="The first version invented an extra ask; the shipped version only clarifies the same query question." width="100%">
+</p>
+
 Real outputs, not hand-written. Each sample is the first passing trial from the final eval run of the shipped prompts
 ([`evals/results/final.json`](../evals/results/final.json)), next to the first trial of the original v0 prompts on the same input (that baseline run isn't shipped, because some of its rewrites echoed the author's local paths).
 Personas are the majority vote across the 3 classifier trials. The web samples use the fixtures in
