@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "prompt-rewriter",
+  "version": "1.0.0",
+  "description": "On demand via /rewrite: classifies a prompt into role + task personas, adds recent web context, and rewrites it with Haiku for review.",
+  "author": {
+    "name": "Kunal Kumar",
+    "url": "https://github.com/KunalKumarkkr01"
+  },
+  "homepage": "https://github.com/KunalKumarkkr01/prompt-rewriter",
+  "repository": "https://github.com/KunalKumarkkr01/prompt-rewriter",
+  "license": "MIT",
+  "keywords": [
+    "prompt",
+    "rewrite",
+    "prompt-engineering",
+    "personas",
+    "haiku",
+    "slash-command"
+  ]
+}

@@ -1,0 +1,7 @@
+Web search results for query: "Next.js 14 to 15 upgrade breaking changes"
+1. Upgrading: Version 15 | Next.js — https://nextjs.org/docs/app/guides/upgrading/version-15
+   Next.js 15 makes request APIs like cookies(), headers() and params asynchronous; a codemod (npx @next/codemod@canary upgrade latest) migrates most call sites. The minimum React version is 19.
+2. Next.js 15 caching changes — https://nextjs.org/blog/next-15
+   fetch requests and GET Route Handlers are no longer cached by default.
+3. Best pizza in Austin 2026 — https://example.com/pizza
+   Our ranking of the top 10 pizza places.

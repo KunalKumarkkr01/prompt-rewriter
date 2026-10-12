@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "prompt-rewriter",
+  "description": "Single-plugin marketplace for prompt-rewriter: rewrite a prompt with matching personas and recent web context before you send it.",
+  "owner": {
+    "name": "Kunal Kumar",
+    "url": "https://github.com/KunalKumarkkr01"
+  },
+  "plugins": [
+    {
+      "name": "prompt-rewriter",
+      "description": "/rewrite <prompt> classifies it into role + task personas, adds recent web context when it matters, and puts a clearer rewrite in your prompt box for review.",
+      "source": "./",
+      "category": "productivity",
+      "homepage": "https://github.com/KunalKumarkkr01/prompt-rewriter"
+    }
+  ]
+}

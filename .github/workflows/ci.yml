@@ -1,0 +1,51 @@
+name: CI
+
+# Validates the mod on every push and PR to main. This job ("validate") is the
+# required status check for branch protection, so PRs can't merge unless it passes.
+# The evals (evals/run_eval.py) need a Claude login and cost money, so they run locally, not here.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Validate the plugin (manifest, marketplace, hooks module)
+        run: npx -y @anthropic-ai/claude-code@2.1.296 plugin validate .
+
+      - name: Validate JSON manifests and eval cases
+        run: |
+          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json hooks/hooks.json; do
+            python -c "import json,sys; json.load(open(sys.argv[1])); print('ok:', sys.argv[1])" "$f"
+          done
+          for f in evals/cases.jsonl evals/holdout.jsonl; do
+            python -c "import json,sys; n=[json.loads(l) for l in open(sys.argv[1]) if l.strip()]; print('ok:', sys.argv[1], len(n), 'cases')" "$f"
+          done
+
+      - name: Check every persona opens with a "# " summary line
+        run: |
+          bad=0
+          for f in personas/roles/*.md personas/tasks/*.md; do
+            head -n1 "$f" | grep -q '^# ' || { echo "missing '# ' summary line: $f"; bad=1; }
+          done
+          exit $bad
+
+      - name: Byte-compile the eval harness
+        run: python -m py_compile evals/run_eval.py
