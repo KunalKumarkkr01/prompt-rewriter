@@ -32,8 +32,17 @@ Answer `y` to add the marketplace, then press Enter to pick the user scope. It's
 | Command | What it does |
 | --- | --- |
 | `/rewrite <prompt>` | Classify, search if needed, rewrite, and put the result in your prompt box |
-| `/rewrite-again` | Get a fresh rewrite of the same original prompt |
+| `/rewrite-again [more context]` | Rewrite your original prompt again. Anything after the command is added to it, and later retries keep it |
 | `/rewrite-cancel` | Stop a rewrite in progress, or discard one, and put your original back (Esc also stops it) |
+
+**Not happy with a rewrite?** You don't need to clear the box first. If your very first keystroke on a fresh rewrite is `/`, it replaces the rewrite, so you can type straight over it:
+
+```
+/rewrite-again it only fails on CI, not locally
+/rewrite-cancel
+```
+
+Once you've edited the rewrite in any other way, `/` is plain text again, so your edits are never wiped.
 
 Pressing Enter on any normal prompt sends it as usual: the mod does nothing unless you type `/rewrite`. If you clear the box while a rewrite is pending, whatever you type next is sent as typed, with no personas attached.
 

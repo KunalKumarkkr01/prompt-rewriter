@@ -22,7 +22,7 @@ const SOURCE_URL_PATTERN = /https?:\/\//
 const REWRITE_COMMAND = 'rewrite'
 const CANCEL_COMMAND = 'rewrite-cancel'
 const AGAIN_COMMAND = 'rewrite-again'
-const REVIEW_STATUS = `Rewrite ready: Enter to send · /${AGAIN_COMMAND} · /${CANCEL_COMMAND}`
+const REVIEW_STATUS = `Rewrite ready: Enter to send · or type /${AGAIN_COMMAND} [more context] or /${CANCEL_COMMAND} over it`
 
 /** One persona file: `name` is the file name without extension, `summary` its first line. */
 type Persona = { name: string; summary: string; body: string }
@@ -267,7 +267,8 @@ async function runRewrite($: EngineInterface, state: State, original: string, si
  * Returns: nothing; registers the commands, submit and edit hooks.
  * Usage:
  *   - /rewrite fix the flaky login test → review the rewrite in the box, Enter to send.
- *   - /rewrite-again → a fresh rewrite of the same original prompt.
+ *   - /rewrite-again [more context] → a fresh rewrite of the original prompt, plus that context if given.
+ *   - type / as the first key on an untouched rewrite → it is replaced, ready for /rewrite-again or /rewrite-cancel.
  *   - /rewrite-cancel (or Esc while it runs) → your original prompt goes back in the box.
  *   - clear the box and type something else → sent as typed, no personas attached.
  */
@@ -282,7 +283,8 @@ export const register: Register = on => {
     })
     await $.command.register({
       name: AGAIN_COMMAND,
-      description: 'Prompt rewriter: ask Haiku for a fresh rewrite of your original prompt.',
+      description: 'Prompt rewriter: rewrite your original prompt again, optionally with more context.',
+      argumentHint: '[more context]',
     })
     await $.command.register({
       name: CANCEL_COMMAND,
@@ -308,9 +310,14 @@ export const register: Register = on => {
     return next(e)
   })
 
+  // A "/" typed as the first keystroke on an untouched rewrite replaces it, so /rewrite-again or
+  // /rewrite-cancel can be typed straight over it. After any other edit, "/" is plain text.
   // Emptying the box during review means "not this one": what's typed next is sent as typed.
   on('prompt.edit', async ($, e, next) => {
-    const box = await next(e)
+    const review = state.review
+    const isSlashOverRewrite = review !== undefined && !review.isAbandoned && e.text === review.rewritten
+      && e.start === e.end && e.inputText === SLASH_COMMAND_PREFIX
+    const box = await next(isSlashOverRewrite ? { ...e, text: '', cursor: 0, start: 0, end: 0 } : e)
     if (state.review && box.text.trim() === '') state.review.isAbandoned = true
     return box
   })
@@ -321,9 +328,12 @@ export const register: Register = on => {
     return runRewrite($, state, original, next.signal)
   })
 
+  // `/rewrite-again <more context>` adds the context to the original, so later retries keep it too.
   on('command.run', { command: AGAIN_COMMAND }, ($, e, next) => {
     if (!state.review) return { text: `Nothing to rewrite again: run /${REWRITE_COMMAND} <prompt> first.` }
-    return runRewrite($, state, state.review.original, next.signal)
+    const moreContext = e.args.trim()
+    const original = moreContext ? `${state.review.original}\n\n${moreContext}` : state.review.original
+    return runRewrite($, state, original, next.signal)
   })
 
   on('command.run', { command: CANCEL_COMMAND }, $ => {
