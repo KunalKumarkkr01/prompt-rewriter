@@ -30,6 +30,9 @@ jobs:
       - name: Validate the plugin (manifest, marketplace, hooks module)
         run: npx -y @anthropic-ai/claude-code@2.1.296 plugin validate .
 
+      - name: Run the mod's tests (tests/*.test.ts, against the engine's test kit)
+        run: npx -y @anthropic-ai/claude-code@2.1.296 plugin test .
+
       - name: Validate JSON manifests and eval cases
         run: |
           for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json hooks/hooks.json; do
